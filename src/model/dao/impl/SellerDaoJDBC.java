@@ -79,26 +79,16 @@ public class SellerDaoJDBC implements SellerDao {
     }
 
     @Override
-    public void deleteById(Seller obj) {
+    public void deleteById(Integer id) {
         PreparedStatement st = null;
         try {
             st = conn.prepareStatement(
                     "DELETE FROM seller "
                             + "WHERE Id = ?",
                     Statement.RETURN_GENERATED_KEYS);
-            st.setInt(1, obj.getId());
+            st.setInt(1, id);
 
-            int rowsAffected = st.executeUpdate();
-            if (rowsAffected > 0) {
-                ResultSet rs = st.getGeneratedKeys();
-                if (rs.next()) {
-                    int id = rs.getInt(1);
-                    obj.setId(id);
-                }
-                DB.closeResultSet(rs);
-            } else {
-                throw new DbException("Insert failed");
-            }
+            st.executeUpdate();
         } catch (SQLException e) {
             throw new DbException(e.getMessage());
         } finally {
